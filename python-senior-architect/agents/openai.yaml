@@ -1,0 +1,20 @@
+# Reference agent definition for hosts that load agents from YAML, for example
+# the OpenAI Agents SDK. The skill body is SKILL.md; this file only pins the
+# entry point, model, and routing guardrail.
+#
+# Note on format: the OpenAI Agents SDK does not ship a YAML loader for this
+# schema today, so treat this as a reference config and pass the fields to the
+# Agent constructor (name, description, model, instructions, tools, handoffs).
+# If your host expects a different schema, adjust the keys accordingly.
+
+name: python-senior-architect
+description: Analyze, design, and plan Python architecture. Review PRs, ADRs, migration strategy. Does not implement large changes.
+model: gpt-4o
+instructions: SKILL.md
+tools:
+  - file_search
+  - web_search
+handoffs:
+  - python-coder
+metadata:
+  short-description: Python architecture analysis, review, and planning
