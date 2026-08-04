@@ -88,6 +88,76 @@ class TestDetectAsyncBlocking(unittest.TestCase):
             )
             self.assertEqual(self.mod.detect(file), [])
 
+    def test_executor_lambda_via_variable_not_flagged(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            file = Path(tmp) / "app.py"
+            file.write_text(
+                "import asyncio, requests\n\nasync def run():\n"
+                "    fetch = lambda: requests.get('http://x')\n"
+                "    await asyncio.run_in_executor(None, fetch)\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(self.mod.detect(file), [])
+
+    def test_loop_run_in_executor_lambda_via_variable_not_flagged(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            file = Path(tmp) / "app.py"
+            file.write_text(
+                "import asyncio, requests\n\nasync def run():\n"
+                "    loop = asyncio.get_running_loop()\n"
+                "    fn = lambda: requests.get('http://x')\n"
+                "    await loop.run_in_executor(None, fn)\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(self.mod.detect(file), [])
+
+    def test_to_thread_lambda_via_variable_not_flagged(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            file = Path(tmp) / "app.py"
+            file.write_text(
+                "import asyncio, requests\n\nasync def run():\n"
+                "    fn = lambda: requests.get('http://x')\n"
+                "    await asyncio.to_thread(fn)\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(self.mod.detect(file), [])
+
+    def test_executor_def_via_alias_variable_not_flagged(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            file = Path(tmp) / "app.py"
+            file.write_text(
+                "import asyncio, requests\n\nasync def run():\n"
+                "    def sync_http():\n"
+                "        return requests.get('http://x')\n"
+                "    fetch = sync_http\n"
+                "    await asyncio.to_thread(fetch)\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(self.mod.detect(file), [])
+
+    def test_executor_lambda_assigned_after_call_not_flagged(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            file = Path(tmp) / "app.py"
+            file.write_text(
+                "import asyncio, requests\n\nasync def run():\n"
+                "    await asyncio.run_in_executor(None, fetch)\n"
+                "    fetch = lambda: requests.get('http://x')\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(self.mod.detect(file), [])
+
+    def test_direct_nested_blocking_call_still_flagged(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            file = Path(tmp) / "app.py"
+            file.write_text(
+                "import asyncio, requests\n\nasync def run():\n"
+                "    fetch = lambda: requests.get('http://x')\n"
+                "    return fetch()\n",
+                encoding="utf-8",
+            )
+            hits = self.mod.detect(file)
+            self.assertIn("requests.get", [name for _lineno, name in hits])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -8,7 +8,7 @@ Dependency-free baseline for async reviews. Flags calls to known-blocking APIs
 async functions are not scanned, and code handed to ``asyncio.run_in_executor`` or
 ``asyncio.to_thread`` is not flagged (that is the safe pattern): a lambda or nested
 function passed to an executor runs off the event loop, so its subtree is excluded
-from the scan.
+from the scan, including when the callable is handed over through a local variable.
 
 The check is a heuristic, not proof. Exit code 0 = no hits, 1 = hits found.
 Filesystem and AST helpers are imported from the shared ``pyast_utils`` module
@@ -90,18 +90,45 @@ EXECUTOR_CALLS: tuple[str, ...] = (
 
 
 def _is_executor_call(name: str) -> bool:
-    return name in EXECUTOR_CALLS or name in ("run_in_executor", "to_thread")
+    """True for ``asyncio.run_in_executor``/``asyncio.to_thread`` and any
+    ``<obj>.run_in_executor``/``<obj>.to_thread`` spelling (``loop.run_in_executor``,
+    ``self._loop.run_in_executor``, a stored executor, ...). Matches by suffix so the
+    executor-argument logic in :func:`_offloaded_nodes` and the call detection agree.
+    """
+    return bool(name) and (name.endswith("run_in_executor") or name.endswith("to_thread"))
 
 
 def _offloaded_nodes(async_func: ast.AsyncFunctionDef) -> set[ast.AST]:
     """Return lambdas and nested functions inside ``async_func`` that are passed to
     an executor (``run_in_executor``/``to_thread``). Those run off the event loop, so
     blocking calls in their subtrees are safe and must not be flagged.
+
+    The argument is tracked through simple local aliasing too: a lambda or nested
+    function assigned to a variable and then passed to the executor is still offloaded
+    (``fn = lambda: requests.get(url); await run_in_executor(None, fn)``). Both
+    assignment-before-call and call-before-assignment orders are recognized.
     """
     nested_defs: dict[str, ast.FunctionDef] = {}
     for child in ast.walk(async_func):
         if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)) and child is not async_func:
             nested_defs.setdefault(child.name, child)
+
+    assigned: dict[str, ast.AST] = {}
+    for child in ast.walk(async_func):
+        target: ast.expr | None = None
+        value: ast.expr | None = None
+        if isinstance(child, ast.Assign) and len(child.targets) == 1:
+            target, value = child.targets[0], child.value
+        elif isinstance(child, ast.AnnAssign):
+            target, value = child.target, child.value
+        elif isinstance(child, ast.NamedExpr):
+            target, value = child.target, child.value
+        if not isinstance(target, ast.Name) or value is None:
+            continue
+        if isinstance(value, ast.Lambda):
+            assigned[target.id] = value
+        elif isinstance(value, ast.Name) and value.id in nested_defs:
+            assigned[target.id] = nested_defs[value.id]
 
     safe: set[ast.AST] = set()
     for child in ast.walk(async_func):
@@ -117,8 +144,10 @@ def _offloaded_nodes(async_func: ast.AsyncFunctionDef) -> set[ast.AST]:
             func_arg = child.args[0]
         if isinstance(func_arg, ast.Lambda):
             safe.add(func_arg)
-        elif isinstance(func_arg, ast.Name) and func_arg.id in nested_defs:
-            safe.add(nested_defs[func_arg.id])
+        elif isinstance(func_arg, ast.Name):
+            offloaded = assigned.get(func_arg.id) or nested_defs.get(func_arg.id)
+            if offloaded is not None:
+                safe.add(offloaded)
     return safe
 
 

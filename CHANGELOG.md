@@ -3,6 +3,21 @@
 All notable changes to the Python Developer Agent Skill Suite are documented here.
 Format follows Keep a Changelog. Versioning follows Semantic Versioning.
 
+## [0.1.1] - 2026-08-05
+
+### Fixed
+- `python-async-architect/scripts/detect_async_blocking.py`: no longer flags blocking
+  calls that run off the event loop. A lambda or nested helper handed to an executor
+  through a local variable (for example
+  `fn = lambda: requests.get(url); await loop.run_in_executor(None, fn)`) was reported
+  as a blocking call even though it is offloaded. Executor callables are now resolved
+  through variable aliases (assignment before or after the call), and executor calls
+  are matched by suffix (`.run_in_executor`, `.to_thread`) so `loop.run_in_executor`,
+  `self._loop.run_in_executor`, and similar spellings are recognized, not only
+  `asyncio.run_in_executor`. Direct synchronous calls are still flagged.
+- Added six unit tests for the executor-offload false positives in
+  `tests/test_detect_async_blocking.py`.
+
 ## [0.1.0] - 2026-08-02
 
 First release. The suite is a set of composable agent skills for senior-level
