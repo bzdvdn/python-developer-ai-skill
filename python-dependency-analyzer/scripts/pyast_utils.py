@@ -70,40 +70,68 @@ def module_set(root: Path, files: list[Path]) -> set[str]:
     return {module_name(root, path) for path in files if module_name(root, path)}
 
 
+class _RuntimeImports(ast.NodeVisitor):
+    """Collect imports, skipping ``if TYPE_CHECKING:`` blocks entirely.
+
+    ``if TYPE_CHECKING:`` imports are compile-time only: they are never
+    executed at runtime and cannot participate in real import cycles, so the
+    import graph (and any cycle/layer analysis built on it) must ignore them.
+    """
+
+    def __init__(self) -> None:
+        self.imports: set[str] = set()
+
+    def visit_If(self, node: ast.If) -> None:
+        if isinstance(node.test, ast.Name) and node.test.id == "TYPE_CHECKING":
+            return
+        self.generic_visit(node)
+
+    def visit_Import(self, node: ast.Import) -> None:
+        for alias in node.names:
+            self.imports.add(alias.name)
+        self.generic_visit(node)
+
+    def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
+        if node.module:
+            self.imports.add(node.module)
+        elif node.level:
+            self.imports.add("." * node.level)
+        self.generic_visit(node)
+
+
+def _walk_runtime_imports(tree: ast.AST, resolve: bool) -> set[str]:
+    """Run the runtime-only import walk, optionally preserving relative levels."""
+    visitor = _RuntimeImports()
+    visitor.visit(tree)
+    if resolve:
+        return {imp for imp in visitor.imports if not imp.startswith(".")}
+    return visitor.imports
+
+
 def parse_imports(path: Path) -> set[str]:
-    """Return imported module names as written (absolute modules only)."""
+    """Return imported module names as written (absolute modules only).
+
+    ``if TYPE_CHECKING:`` imports are excluded: they are never executed at
+    runtime and therefore not part of the module's real dependency set.
+    """
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     except (SyntaxError, UnicodeDecodeError):
         return set()
-    imports: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            for alias in node.names:
-                imports.add(alias.name)
-        elif isinstance(node, ast.ImportFrom):
-            if node.module:
-                imports.add(node.module)
-    return imports
+    return _walk_runtime_imports(tree, resolve=True)
 
 
 def imported_roots(path: Path) -> set[str]:
-    """Return imports with relative levels preserved for first-party resolution."""
+    """Return runtime imports with relative levels preserved for first-party resolution.
+
+    ``if TYPE_CHECKING:`` imports are excluded for the same reason as in
+    ``parse_imports``.
+    """
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     except (SyntaxError, UnicodeDecodeError):
         return set()
-    imports: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            for alias in node.names:
-                imports.add(alias.name)
-        elif isinstance(node, ast.ImportFrom):
-            if node.module:
-                imports.add("." * node.level + node.module)
-            elif node.level:
-                imports.add("." * node.level)
-    return imports
+    return _walk_runtime_imports(tree, resolve=False)
 
 
 def resolve_relative_import(current: str, raw_import: str) -> str | None:
