@@ -1,6 +1,6 @@
 ---
 name: python-async-architect
-version: 0.1.1
+version: 0.1.3
 license: MIT
 description: Use for async and concurrency architecture in Python systems: event loops, workers, queues, backpressure, idempotency, retries, and migrating sync code. Designs the concurrency model and message topology; profiling goes to python-performance.
 metadata:

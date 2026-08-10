@@ -3,7 +3,7 @@
 All notable changes to the Python Developer Agent Skill Suite are documented here.
 Format follows Keep a Changelog. Versioning follows Semantic Versioning.
 
-## [0.1.3]
+## [0.1.3] - 2026-08-11
 
 ### Changed
 

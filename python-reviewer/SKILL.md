@@ -1,6 +1,6 @@
 ---
 name: python-reviewer
-version: 0.1.1
+version: 0.1.3
 license: MIT
 description: Use for Python code review and PR review focused on correctness, regressions, maintainability, typing, tests, API behavior, and integration risk. This skill prioritizes findings with file references and does not rewrite code unless explicitly asked.
 metadata:

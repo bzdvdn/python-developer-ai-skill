@@ -1,6 +1,6 @@
 ---
 name: python-coder
-version: 0.1.1
+version: 0.1.3
 license: MIT
 description: Use when Python implementation code must be written or modified. Executes bounded plans, bug fixes, refactors, tests, and integrations while preserving architecture and conventions; for unclear architecture, use python-senior-architect first.
 metadata:
