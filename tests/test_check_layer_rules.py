@@ -48,6 +48,13 @@ class TestLayerMatching(unittest.TestCase):
         self.assertTrue(self.mod.matches_entry("orm", None, "django.db.models", "django"))
         self.assertTrue(self.mod.matches_entry("storage", None, "google.cloud.storage.blob", "google"))
 
+    def test_dotted_keyword_does_not_also_match_top_level_category(self) -> None:
+        # django.db is 'orm' by the most-specific-keyword rule; it must not also
+        # match the 'web' category that its top-level 'django' belongs to, keeping
+        # the scanner consistent with the architecture report.
+        self.assertTrue(self.mod.matches_entry("orm", None, "django.db.models", "django"))
+        self.assertFalse(self.mod.matches_entry("web", None, "django.db.models", "django"))
+
     def test_does_not_match_unrelated(self) -> None:
         self.assertFalse(self.mod.matches_entry("orm", None, "httpx", "httpx"))
         self.assertFalse(self.mod.matches_entry("web", None, "sqlalchemy", "sqlalchemy"))

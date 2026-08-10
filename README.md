@@ -2,7 +2,7 @@
 
 Composable agent skills for senior-level Python development. Each skill owns one responsibility and hands off to others through explicit contracts, so no single skill tries to be architect, implementer, reviewer, tester, security auditor, performance engineer, and production engineer at once.
 
-Current version: 0.1.0 (see [CHANGELOG.md](CHANGELOG.md)).
+Current version: 0.1.1 (see [CHANGELOG.md](CHANGELOG.md)).
 
 ## Skill Map
 
@@ -52,9 +52,10 @@ Top-level docs:
 3. Follow each skill's handoff contract when moving between skills.
 
 To install the suite into a specific host (opencode, Claude Code, Codex CLI, Kilo
-Code, Trae), see [INSTALL.md](INSTALL.md). The `agents/` folder in each skill holds
-host-specific agent definitions (for example OpenAI Agents SDK `openai.yaml`); for
-hosts without a dedicated definition, point the skill loader at the directory
+Code, Trae), see [INSTALL.md](INSTALL.md). An `agents/` folder may hold a
+host-specific agent definition; only `python-senior-architect` ships one today
+(the OpenAI Agents SDK reference `agents/openai.yaml`, see its header notes). For
+every other skill, point the host's skill loader at the skill directory
 `SKILL.md`.
 
 ## Validation
@@ -62,8 +63,11 @@ hosts without a dedicated definition, point the skill loader at the directory
 Run the suite consistency check:
 
 ```bash
-python3 scripts/validate_suite.py
+python3 scripts/validate_suite.py --strict
 ```
+
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs the strict consistency
+check and the unit tests on every push and pull request.
 
 ## Testing
 

@@ -46,6 +46,38 @@ FRAMEWORK_KEYWORDS: dict[str, tuple[str, ...]] = {
 }
 
 
+def framework_category(raw: str, keywords: dict[str, tuple[str, ...]] | None = None) -> str | None:
+    """Return the single canonical keyword category an import belongs to, or None.
+
+    Resolution is by the *most specific* matching keyword: a dotted keyword such
+    as ``django.db`` shadows the top-level keyword of the same package
+    (``django``), so ``django.db.models`` resolves to ``orm`` and never also to
+    ``web``. This keeps the architecture report and the layer-rule scanner on the
+    same one category per import, which the keyword-uniqueness invariant alone does
+    not guarantee (``django`` and ``django.db`` are distinct keywords in distinct
+    categories). Unknown imports resolve to ``None``.
+    """
+    keys = keywords if keywords is not None else FRAMEWORK_KEYWORDS
+    top = raw.split(".")[0]
+    best_len = -1
+    best_category: str | None = None
+    for category, group in keys.items():
+        for keyword in group:
+            if "." in keyword:
+                if raw == keyword or raw.startswith(keyword + "."):
+                    match_len = len(keyword)
+                else:
+                    continue
+            elif keyword == top:
+                match_len = len(keyword)
+            else:
+                continue
+            if match_len > best_len:
+                best_len = match_len
+                best_category = category
+    return best_category
+
+
 def iter_python_files(root: Path) -> list[Path]:
     """Return sorted ``.py`` files under ``root``, skipping generated/vendored dirs."""
     files: list[Path] = []

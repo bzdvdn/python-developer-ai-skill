@@ -1,6 +1,6 @@
 ---
 name: python-senior-architect
-version: 0.1.0
+version: 0.1.1
 license: MIT
 description: Use for architectural analysis, design, planning, refactoring strategy, PR review, ADRs, or implementation guidance for Python projects. Inspects repositories and reasons about layering, DDD, Clean/Hexagonal architecture, async, persistence, and deployment; it does not implement large changes (delegate to python-coder).
 metadata:

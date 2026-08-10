@@ -19,6 +19,9 @@ Exit codes:
     1  at least one judged scenario fails
     2  usage error, judge unavailable, or scenarios skipped due to missing responses
        (use --allow-missing to treat missing responses as skipped instead)
+
+Pass ``--report <path>`` to also write a JSON summary (pass/fail/pending scenario
+ids and skipped count) for reproducible scoring artifacts.
 """
 
 from __future__ import annotations
@@ -68,6 +71,7 @@ def main() -> int:
     parser.add_argument("--base-url", help="OpenAI-compatible base URL (required unless LLM_BASE_URL is set).")
     parser.add_argument("--parse-only", action="store_true", help="Only list scenarios and check responses; no LLM call.")
     parser.add_argument("--allow-missing", action="store_true", help="Treat missing responses as skipped, not an error.")
+    parser.add_argument("--report", default=None, help="Optional path to write a JSON summary of the run.")
     args = parser.parse_args()
 
     api_key = os.environ.get("LLM_API_KEY") or os.environ.get("OPENAI_API_KEY")
@@ -140,6 +144,20 @@ def main() -> int:
         print("\nFailed:")
         for r in failed:
             print(f"- {r['skill']} / {r['scenario']}")
+
+    if args.report:
+        summary = {
+            "skills": sorted({r["skill"] for r in results}),
+            "scenarios": len(results),
+            "pass": [r["scenario"] for r in passed],
+            "fail": [r["scenario"] for r in failed],
+            "pending": [r["scenario"] for r in pending],
+            "skipped": skipped,
+        }
+        report_path = Path(args.report)
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+        print(f"report: {report_path}")
 
     if failed:
         return 1

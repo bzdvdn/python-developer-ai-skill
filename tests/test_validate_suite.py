@@ -93,6 +93,29 @@ class TestVersionConsistency(unittest.TestCase):
             self.mod.validate_versions(report, root)
         self.assertEqual(report.errors, [])
 
+    def test_changelog_version_mismatch_flagged(self) -> None:
+        report = self.mod.Report()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name in ("python-a", "python-b"):
+                (root / name).mkdir()
+                (root / name / "SKILL.md").write_text(GOOD_FRONTMATTER, encoding="utf-8")
+            (root / "CHANGELOG.md").write_text(
+                "# Changelog\n\n## [0.2.0] - 2026-01-01\n\n- something\n", encoding="utf-8"
+            )
+            self.mod.validate_versions(report, root)
+        self.assertTrue(any("CHANGELOG" in e for e in report.errors))
+
+    def test_readme_version_mismatch_flagged(self) -> None:
+        report = self.mod.Report()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "python-a").mkdir()
+            (root / "python-a" / "SKILL.md").write_text(GOOD_FRONTMATTER, encoding="utf-8")
+            (root / "README.md").write_text("Current version: 0.3.0 (see CHANGELOG).\n", encoding="utf-8")
+            self.mod.validate_versions(report, root)
+        self.assertTrue(any("README" in e for e in report.errors))
+
 
 class TestDuplicationDetection(unittest.TestCase):
     def setUp(self) -> None:

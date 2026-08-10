@@ -63,6 +63,7 @@ if _pyast_utils_dir is not None:
 from pyast_utils import (  # noqa: E402
     FRAMEWORK_KEYWORDS,
     callable_name,
+    framework_category,
     iter_python_files,
     module_name,
     parse_imports,
@@ -160,11 +161,13 @@ def report(root: Path, domain_names: list[str] | None) -> None:
             entry_points.append((label, str(path.relative_to(root))))
 
         imports = parse_imports(path)
-        for category, keys in FRAMEWORK_KEYWORDS.items():
-            for raw in imports:
-                top = resolve_top_level(raw)
-                if top in keys or any(raw.startswith(k) for k in keys if "." in k):
-                    framework_usage[category].add(top)
+        # Categorize each import by its single canonical framework keyword category
+        # (see pyast_utils.framework_category): a dotted keyword such as
+        # django.db resolves to 'orm', never simultaneously to 'web'.
+        for raw in imports:
+            category = framework_category(raw)
+            if category is not None:
+                framework_usage[category].add(resolve_top_level(raw))
 
         is_domain = _module_in_domains(module, domain_set) and pkg != "tests"
         if is_domain:

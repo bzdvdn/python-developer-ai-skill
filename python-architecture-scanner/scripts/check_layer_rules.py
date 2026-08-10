@@ -26,7 +26,9 @@ Contract example (JSON):
 
 A ``to`` entry matches a target by its layer name, by its top-level module name,
 or by a built-in keyword category (``web``, ``orm``, ``queue``, ``cache``,
-``http_client``, ``storage``). Type-only imports are treated as imports; use
+``http_client``, ``storage``). Category matching uses the most specific keyword
+per import (``django.db`` is ``orm``, not ``web``), the same single-category rule
+the architecture report uses. Type-only imports are treated as imports; use
 ``--exclude`` for intentional exceptions.
 
 Usage:
@@ -74,8 +76,8 @@ _pyast_utils_dir = _pyast_utils_scripts_dir()
 if _pyast_utils_dir is not None:
     sys.path.insert(0, str(_pyast_utils_dir))
 from pyast_utils import (  # noqa: E402
-    FRAMEWORK_KEYWORDS,
     first_party_target,
+    framework_category,
     imported_roots,
     iter_python_files,
     module_name,
@@ -99,19 +101,15 @@ def layer_prefixes_from_config(config: dict) -> list[tuple[str, str]]:
     return sorted(prefixes, key=lambda item: (-len(item[0]), item[0]))
 
 
-def _in_category(full: str, top: str, category: tuple[str, ...]) -> bool:
-    if top in category:
-        return True
-    return any(full == key or full.startswith(key + ".") for key in category)
-
-
 def matches_entry(entry: str, target_layer: str | None, full: str, top: str) -> bool:
     if target_layer == entry:
         return True
     if top == entry or full == entry or full.startswith(entry + "."):
         return True
-    category = FRAMEWORK_KEYWORDS.get(entry)
-    return bool(category) and _in_category(full, top, category)
+    # Keyword-category entries resolve through the shared most-specific rule, so
+    # the scanner and the architecture report agree on one category per import
+    # (for example django.db is 'orm', never also 'web').
+    return framework_category(full) == entry
 
 
 def load_config(path: Path) -> dict:

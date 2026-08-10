@@ -1,6 +1,6 @@
 ---
 name: python-performance
-version: 0.1.0
+version: 0.1.1
 license: MIT
 description: Use to measure and improve Python performance: slow endpoints, memory, database queries, async bottlenecks, caching, queue throughput, latency, and scalability. Profiles before recommending changes; concurrency or queue design belongs to python-async-architect.
 metadata:

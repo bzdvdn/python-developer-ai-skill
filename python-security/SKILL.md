@@ -1,6 +1,6 @@
 ---
 name: python-security
-version: 0.1.0
+version: 0.1.1
 license: MIT
 description: Use for Python security review involving authentication, authorization, secrets, input validation, dependency vulnerabilities, SSRF, injection, deserialization, cryptography usage, tenant isolation, and secure deployment defaults.
 metadata:

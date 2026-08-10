@@ -59,7 +59,11 @@ endpoint is required.
    ```bash
    python3 scripts/run_evals.py --skill python-coder --responses out/
    python3 scripts/run_evals.py --responses out/
+   python3 scripts/run_evals.py --responses out/ --report out/summary.json
    ```
+
+   Pass `--report <path>` to write a JSON run summary (pass/fail/pending scenario ids
+   and skipped count) alongside the console output.
 
    Response lookup: `out/<skill>/<scenario-id>.md`, then `out/<scenario-id>.md`.
    Missing responses are errors unless `--allow-missing` is set.
@@ -99,3 +103,14 @@ Exit codes: `0` pass, `1` fail, `2` judge/usage error.
   scenario definitions and the judge harness, not the model's answers. Scores depend
   on the judge model and endpoint, so treat a numeric score as a signal for a given
   `LLM_MODEL`, not as an absolute quality number.
+
+## Limitations And Roadmap
+
+- Fixtures are prose sketches, not checked-in code: the `Repository Fixture` section
+  describes layout and responsibilities instead of materializing a runnable repo. The
+  harness cannot currently build a scratch repository from a fixture, so runs stay
+  semi-manual: generate the skill output against a fixture-derived scratch repo, then
+  judge. Automating fixture materialization (a checked-in `fixtures/<skill>/<scenario>/`
+  tree the judge can clone) is the planned next step.
+- The judge is as good as the judge model and rubric; verdicts are relative, not
+  absolute quality numbers.

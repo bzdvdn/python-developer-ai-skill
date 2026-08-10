@@ -3,9 +3,41 @@
 All notable changes to the Python Developer Agent Skill Suite are documented here.
 Format follows Keep a Changelog. Versioning follows Semantic Versioning.
 
+## [0.1.3]
+
+### Changed
+
+- `scripts/validate_suite.py` now cross-checks the SKILL frontmatter `version`
+  against the latest `CHANGELOG.md` release and the README `Current version:` line,
+  so a release bump can no longer drift across the suite.
+- Shared `python-dependency-analyzer/scripts/pyast_utils.py` gained
+  `framework_category()`: an import resolves to a single canonical keyword category
+  by the most specific matching keyword, so `django.db.model` is `orm` and never
+  also `web`. `architecture_report.py` and `check_layer_rules.py` both use this rule
+  instead of each having its own top-level-first matching, which previously double-
+  reported `django.db` under both `web` and `orm`.
+- `scripts/run_evals.py` accepts `--report <path>` to write a JSON run summary
+  (pass/fail/pending scenario ids and skipped count) for reproducible scoring.
+- `evals/README.md` documents the JSON report and an explicit limitations/roadmap
+  note: fixtures are prose sketches, so skill eval runs remain semi-manual until
+  fixture materialization is automated.
+- `README.md` clarified that `agents/` is optional and only
+  `python-senior-architect` ships a reference `openai.yaml`; other skills point the
+  host loader at `SKILL.md`.
+
+### Added
+
+- GitHub Actions workflow `.github/workflows/ci.yml`: runs
+  `scripts/validate_suite.py --strict` and the unit-test suite on push and pull
+  requests, with `PYTHONPYCACHEPREFIX` so no generated caches appear in the tree.
+- Unit tests for `framework_category()` (`tests/test_pyast_utils.py`), for the
+  changelog/README version cross-check, and for the single-category behavior in the
+  layer-rule scanner and the architecture report.
+
 ## [0.1.1] - 2026-08-05
 
 ### Fixed
+
 - `python-async-architect/scripts/detect_async_blocking.py`: no longer flags blocking
   calls that run off the event loop. A lambda or nested helper handed to an executor
   through a local variable (for example
@@ -39,12 +71,14 @@ evals.
   `license: MIT` frontmatter.
 
 #### Handoff and routing
+
 - `python-agent-orchestrator` routes work across the suite and defines the handoff
   contract.
 - `templates/handoff.md` for all skills: objective, scope, out of scope, files,
   validation, risks, definition of done.
 
 #### Templates
+
 - `python-senior-architect/templates/`: `adr.md`, `architecture-review.md`,
   `code-review-summary.md`, `implementation-plan.md`, `incident-analysis.md`,
   `migration-plan.md`, `pr-review.md`, `risk-analysis.md`.
@@ -58,6 +92,7 @@ evals.
 - `python-async-architect/templates/`: `async-architecture-review.md`, `worker-design.md`.
 
 #### References
+
 - `python-senior-architect/references/`: `architecture-patterns.md`, `heuristics.md`,
   `inspection.md`, `refactoring-playbook.md`, `review-checklists.md`.
 - `python-coder/references/python-practices.md`.
@@ -69,6 +104,7 @@ evals.
 - `python-async-architect/references/async-patterns.md`.
 
 #### Deterministic tooling
+
 - `python-dependency-analyzer/scripts/import_graph.py` — import graphs, cycles,
   layer violations, dependency health.
 - `python-senior-architect/scripts/architecture_report.py` — architecture analysis
@@ -82,6 +118,7 @@ evals.
 - All scripts are dependency-free (standard library only).
 
 #### Suite validation and evals
+
 - `scripts/validate_suite.py` with `--strict` mode: unique skill names matching
   their directories, valid frontmatter, resolvable template/script/reference links,
   agreement between the suite document, the README, and the orchestrator skill list.
@@ -90,14 +127,17 @@ evals.
   `scripts/run_evals.py` (batch), OpenAI-compatible, dependency-free.
 
 #### Examples
+
 - `python-senior-architect/examples/`: `celery-migration-plan.md`,
   `django-layering-review.md`, `fastapi-hexagonal-review.md`.
 - `examples/billing-feature-walkthrough.md` — end-to-end artifact example across skills.
 
 #### Agent definitions
+
 - `python-senior-architect/agents/openai.yaml` — OpenAI Agents SDK definition.
 
 #### Documentation
+
 - `README.md` — skill map, layout, usage, validation, testing, evals, roadmap.
 - `INSTALL.md` — per-host installation guide (opencode, Claude Code, Codex CLI,
   Kilo Code, Trae) and the universal `.agents/skills/` option.
@@ -107,6 +147,7 @@ evals.
 - `.gitignore` and `CHANGELOG.md`.
 
 #### Testing
+
 - Unit tests for all deterministic tooling, the suite validator, and the sync tool
   under `tests/` (stdlib `unittest`, no dependencies): import graph, architecture
   report, layer rules, async-blocking detection, eval judge, suite validator,
@@ -114,6 +155,7 @@ evals.
 - Synthetic fixtures: `layered`, `cyclic`, and `async_blocking` repositories.
 
 ### Changed
+
 - `PYTHON_SENIOR_ARCHITECT_SKILL_DESIGN.md`: added an explicit "Deterministic vs
   Agent Tooling" policy under the tool strategy, reconciling the stdlib-only
   constraint on shipped `scripts/` with the optional agent-facing analysis tools
@@ -165,6 +207,7 @@ evals.
   topology) in the orchestrator intent table and the performance skill description.
 
 ### Fixed
+
 - `scripts/validate_suite.py` checks the README skill list, enforces a consistent
   `version` frontmatter, warns on `references/` headings duplicated inline in a
   `SKILL.md`, lists every cache directory instead of stopping at the first, validates

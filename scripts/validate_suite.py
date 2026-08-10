@@ -10,7 +10,9 @@ Checks:
    or, for cross-skill full paths, relative to the repository root).
 4. The skill list in ``PYTHON_AGENT_SKILL_SUITE.md``, ``README.md``, and the
    orchestrator's ``SKILL.md`` matches the directories present.
-5. All skills share the same ``version`` frontmatter value.
+5. All skills share the same ``version`` frontmatter value, and that value
+   matches the latest ``CHANGELOG.md`` release and the README's
+   ``Current version:`` line, so release bumps cannot drift across the suite.
 6. Warnings for generated caches left in the tree and for ``references/``
    headings duplicated inline in a ``SKILL.md``.
 7. Every script under ``scripts/`` and ``python-*/scripts/`` imports only the
@@ -42,6 +44,8 @@ SKILL_TOKEN_RE = re.compile(r"`(python-[a-z-]+)`")
 REF_RE = re.compile(r"((?:templates|scripts|references)/[A-Za-z0-9_./-]+|python-[a-z-]+/(?:templates|scripts|references)/[A-Za-z0-9_./-]+)")
 HEADING_RE = re.compile(r"^## (.+)$", re.MULTILINE)
 CACHE_DIRS = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
+CHANGELOG_VERSION_RE = re.compile(r"^## \[([0-9]+\.[0-9]+\.[0-9]+)\]", re.MULTILINE)
+README_VERSION_RE = re.compile(r"Current version:\s*([0-9]+\.[0-9]+\.[0-9]+)")
 
 CONCERN_OWNERSHIP_REL = "python-agent-orchestrator/references/concern-ownership.md"
 OWNERSHIP_ROW_RE = re.compile(r"^\|\s*([^|]+?)\s*\|\s*(python-[a-z][a-z0-9-]*)\s*\|\s*(.+?)\s*\|\s*$")
@@ -166,6 +170,26 @@ def validate_versions(report: Report, root: Path = ROOT) -> None:
     if len(versions) > 1:
         for ver, names in sorted(versions.items()):
             report.error(f"version mismatch: '{ver}' -> {', '.join(sorted(names))}")
+        return
+
+    if len(versions) == 1:
+        version = next(iter(versions))
+        changelog = root / "CHANGELOG.md"
+        if changelog.exists():
+            match = CHANGELOG_VERSION_RE.search(changelog.read_text(encoding="utf-8"))
+            if match and match.group(1) != version:
+                report.error(
+                    f"version mismatch: SKILL frontmatter '{version}' vs "
+                    f"CHANGELOG latest '{match.group(1)}'"
+                )
+        readme = root / "README.md"
+        if readme.exists():
+            match = README_VERSION_RE.search(readme.read_text(encoding="utf-8"))
+            if match and match.group(1) != version:
+                report.error(
+                    f"version mismatch: SKILL frontmatter '{version}' vs "
+                    f"README 'Current version: {match.group(1)}'"
+                )
 
 
 def validate_duplication(skill_dir: Path, report: Report) -> None:

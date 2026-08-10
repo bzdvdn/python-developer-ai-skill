@@ -74,5 +74,42 @@ class TestDomainViolations(unittest.TestCase):
         self.assertIn("Entry Point Candidates", buffer.getvalue())
 
 
+class TestFrameworkSurfaceCategorization(unittest.TestCase):
+    def setUp(self) -> None:
+        self.mod = load("architecture_report")
+        self.surface = self._surface  # alias for readability
+
+    def _surface(self, root: Path) -> str:
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            self.mod.report(root, domain_names=None)
+        output = buffer.getvalue()
+        start = output.index("## Framework Surface")
+        end = output.index("## Domain Importing Infrastructure")
+        return output[start:end]
+
+    def test_django_db_categorized_as_orm_only(self) -> None:
+        # django.db must resolve to 'orm' by the most-specific-keyword rule and
+        # never also to 'web', matching the layer-rule scanner.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "app" / "domain").mkdir(parents=True)
+            (root / "app" / "domain" / "model.py").write_text(
+                "from django.db import models\n", encoding="utf-8"
+            )
+            surface = self._surface(root)
+        self.assertIn("- orm: django", surface)
+        self.assertNotIn("- web:", surface)
+
+    def test_plain_django_is_web(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "app").mkdir()
+            (root / "app" / "main.py").write_text("import django\n", encoding="utf-8")
+            surface = self._surface(root)
+        self.assertIn("- web: django", surface)
+        self.assertNotIn("- orm: django", surface)
+
+
 if __name__ == "__main__":
     unittest.main()
