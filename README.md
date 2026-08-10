@@ -1,8 +1,46 @@
 # Python Developer Agent Skill Suite
 
+[![CI](https://github.com/bzdvdn/python-developer-ai-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/bzdvdn/python-developer-ai-skill/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/bzdvdn/python-developer-ai-skill)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/bzdvdn/python-developer-ai-skill)](CHANGELOG.md)
+[![Stars](https://img.shields.io/github/stars/bzdvdn/python-developer-ai-skill)](https://github.com/bzdvdn/python-developer-ai-skill/stargazers)
+
 Composable agent skills for senior-level Python development. Each skill owns one responsibility and hands off to others through explicit contracts, so no single skill tries to be architect, implementer, reviewer, tester, security auditor, performance engineer, and production engineer at once.
 
 Current version: 0.1.3 (see [CHANGELOG.md](CHANGELOG.md)).
+
+## Get Started In 60 Seconds
+
+```bash
+mkdir -p .agents/skills
+cp -r python-*/ .agents/skills/
+```
+
+`.agents/skills/` is the vendor-neutral location recognized by opencode, Codex
+CLI, Trae, and most other `SKILL.md`-based agents. Per-host paths (Claude Code,
+Kilo Code, ...) are in [INSTALL.md](INSTALL.md). Then ask your agent, for
+example:
+
+- "Find circular imports in this repo"
+- "Review this PR for architectural risks"
+- "Plan how to add billing without coupling it to FastAPI handlers"
+
+Each request routes to the smallest specialist skill chain and hands off through
+explicit contracts.
+
+## Why This Suite
+
+- **One responsibility per skill** — no mega-prompt that tries to be architect,
+  implementer, reviewer, and security auditor at once.
+- **Progressive disclosure** — lean `SKILL.md` activation entry points, depth in
+  `references/`, output contracts in `templates/`, so context stays small.
+- **Evidence over opinion** — skills must ground claims in repository findings;
+  the eval judge fails fabricated evidence.
+- **Deterministic, dependency-free tooling** — import graphs, layer-rule gates,
+  and async-blocking scans are stdlib-only Python that works in CI.
+- **Machine-checked consistency** — `scripts/validate_suite.py --strict` verifies
+  skill lists, versions, links, concern ownership, and byte-identical shared
+  modules on every change.
 
 ## Skill Map
 
@@ -45,6 +83,18 @@ Top-level docs:
 - `scripts/validate_suite.py` — consistency validation.
 - `CHANGELOG.md` — version history.
 
+## Supported Hosts
+
+| Host | Install |
+| --- | --- |
+| opencode | `.agents/skills/`, `.opencode/skills/`, or `~/.config/opencode/skills/` |
+| Claude Code | `.agents/skills/`, `.claude/skills/`, or `~/.claude/skills/` |
+| Codex CLI | `.agents/skills/`, `.codex/skills/`, or `~/.codex/skills/` |
+| Kilo Code | `.kilo/skills/` or `%USERPROFILE%\.kilo\skills\` |
+| Trae | `.agents/skills/`, `~/.trae/skills/`, or `%USERPROFILE%\.trae\skills\` |
+
+See [INSTALL.md](INSTALL.md) for exact per-host commands.
+
 ## Usage
 
 1. Load the `python-agent-orchestrator` skill when a request spans roles or the right skill is unclear.
@@ -57,6 +107,9 @@ host-specific agent definition; only `python-senior-architect` ships one today
 (the OpenAI Agents SDK reference `agents/openai.yaml`, see its header notes). For
 every other skill, point the host's skill loader at the skill directory
 `SKILL.md`.
+
+A worked end-to-end example across skills lives in
+[`examples/billing-feature-walkthrough.md`](examples/billing-feature-walkthrough.md).
 
 ## Validation
 
