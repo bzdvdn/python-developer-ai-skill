@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Developer Agent Skill Suite</title>
+<meta name="description" content="Composable Agent Skills for senior-level Python development: 12 single-responsibility skills with handoff contracts for opencode, Claude Code, Codex CLI, Trae, and Kilo.">
+<link rel="canonical" href="https://bzdvdn.github.io/python-developer-ai-skill/">
+<style>
+  :root { color-scheme: light dark; --accent:#2463eb; --muted:#6b7280; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+         line-height:1.6; color:#111827; background:#fff; }
+  .wrap { max-width:860px; margin:0 auto; padding:48px 20px 96px; }
+  h1 { font-size:2rem; margin:0 0 4px; }
+  .tagline { color:var(--muted); font-size:1.1rem; margin-bottom:24px; }
+  .badges img { margin-right:6px; }
+  h2 { font-size:1.35rem; margin-top:40px; border-bottom:1px solid #e5e7eb; padding-bottom:6px; }
+  pre { background:#0b1220; color:#e6edf3; padding:16px; border-radius:8px; overflow-x:auto; font-size:.9rem; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:.95rem; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid #e5e7eb; }
+  .cta { margin:20px 0; }
+  .btn { display:inline-block; background:var(--accent); color:#fff; text-decoration:none;
+         padding:10px 18px; border-radius:8px; font-weight:600; margin-right:8px; }
+  .btn.ghost { background:transparent; color:var(--accent); border:1px solid var(--accent); }
+  li { margin:4px 0; }
+  footer { margin-top:64px; color:var(--muted); font-size:.9rem; }
+  @media (prefers-color-scheme: dark) {
+    body { background:#0d1117; color:#e6edf3; }
+    h2,th,td { border-color:#21262d; }
+    .tagline{ color:#9ca3af; }
+    .btn.ghost { color:#79b8ff; border-color:#79b8ff; }
+    footer{ color:#8b949e; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Python Developer Agent Skill Suite</h1>
+<p class="tagline">Composable skills for senior-level Python development — one responsibility per skill, explicit handoff contracts, deterministic tooling.</p>
+
+<p class="badges">
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/actions/workflows/ci.yml"><img src="https://github.com/bzdvdn/python-developer-ai-skill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/LICENSE"><img src="https://img.shields.io/github/license/bzdvdn/python-developer-ai-skill" alt="License"></a>
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/releases"><img src="https://img.shields.io/github/v/release/bzdvdn/python-developer-ai-skill" alt="Release"></a>
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/stargazers"><img src="https://img.shields.io/github/stars/bzdvdn/python-developer-ai-skill" alt="Stars"></a>
+</p>
+
+<p class="cta">
+  <a class="btn" href="https://github.com/bzdvdn/python-developer-ai-skill">GitHub</a>
+  <a class="btn ghost" href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/examples/billing-feature-walkthrough.md">Example walkthrough</a>
+  <a class="btn ghost" href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/INSTALL.md">Install guide</a>
+</p>
+
+<h2>Get started in 60 seconds</h2>
+<pre><code>mkdir -p .agents/skills
+cp -r python-*/ .agents/skills/</code></pre>
+<p>`.agents/skills/` is the vendor-neutral location shared by opencode, Codex CLI,
+Trae, and most <code>SKILL.md</code>-based agents. Per-host paths for Claude Code and
+Kilo Code are in the <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/INSTALL.md">INSTALL.md</a>.</p>
+
+<h2>Then just ask your agent</h2>
+<ul>
+  <li>&ldquo;Find circular imports in this repo&rdquo;</li>
+  <li>&ldquo;Review this PR for architectural risks&rdquo;</li>
+  <li>&ldquo;Plan how to add billing without coupling it to FastAPI handlers&rdquo;</li>
+  <li>&ldquo;Design the invoice-generation worker&rdquo;</li>
+</ul>
+<p>Each request routes to the smallest specialist skill chain and hands off through
+explicit contracts.</p>
+
+<h2>The 12 skills</h2>
+<table>
+  <thead><tr><th>Skill</th><th>Responsibility</th></tr></thead>
+  <tbody>
+    <tr><td><code>python-agent-orchestrator</code></td><td>Routes work across the suite, defines handoff contracts</td></tr>
+    <tr><td><code>python-senior-architect</code></td><td>Architecture analysis, design, ADRs, migration strategy</td></tr>
+    <tr><td><code>python-coder</code></td><td>Bounded implementation from a plan or clear request</td></tr>
+    <tr><td><code>python-reviewer</code></td><td>Code and PR review for correctness and regressions</td></tr>
+    <tr><td><code>python-testing</code></td><td>Test strategy, fixtures, regression and contract coverage</td></tr>
+    <tr><td><code>python-security</code></td><td>Auth, secrets, injection, SSRF, dependencies, isolation</td></tr>
+    <tr><td><code>python-performance</code></td><td>Profiling, database and async bottlenecks, caching</td></tr>
+    <tr><td><code>python-production</code></td><td>Deployment, observability, rollback, incidents</td></tr>
+    <tr><td><code>python-dependency-analyzer</code></td><td>Import graphs, cycles, layer violations, dependency health</td></tr>
+    <tr><td><code>python-architecture-scanner</code></td><td>Enforces layer contracts and forbidden-import CI gates</td></tr>
+    <tr><td><code>python-data-architect</code></td><td>Persistence, data models, migrations, warehouses, pipelines</td></tr>
+    <tr><td><code>python-async-architect</code></td><td>Event loops, workers, queues, backpressure, messaging</td></tr>
+  </tbody>
+</table>
+
+<h2>Why this suite</h2>
+<ul>
+  <li><strong>One responsibility per skill</strong> — no mega-prompt that is architect, implementer, reviewer, and security auditor at once.</li>
+  <li><strong>Progressive disclosure</strong> — lean <code>SKILL.md</code> entry points, depth in <code>references/</code>, output contracts in <code>templates/</code>.</li>
+  <li><strong>Evidence over opinion</strong> — claims must be grounded in repository findings; the eval judge fails fabricated evidence.</li>
+  <li><strong>Deterministic, dependency-free tooling</strong> — import graphs, layer-rule gates, and async-blocking scans are stdlib-only Python that runs in CI.</li>
+  <li><strong>Machine-checked consistency</strong> — the suite validator verifies skill lists, versions, links, and concern ownership on every change.</li>
+</ul>
+
+<h2>Supported hosts</h2>
+<table>
+  <thead><tr><th>Host</th><th>Install</th></tr></thead>
+  <tbody>
+    <tr><td>opencode</td><td><code>.agents/skills/</code>, <code>.opencode/skills/</code>, or <code>~/.config/opencode/skills/</code></td></tr>
+    <tr><td>Claude Code</td><td><code>.claude/skills/</code> or plugin marketplace (<code>/plugin marketplace add bzdvdn/python-developer-ai-skill</code>)</td></tr>
+    <tr><td>Codex CLI</td><td><code>.codex/skills/</code> or <code>codex plugin marketplace add bzdvdn/python-developer-ai-skill</code></td></tr>
+    <tr><td>Kilo Code</td><td><code>.kilo/skills/</code></td></tr>
+    <tr><td>Trae</td><td><code>.trae/skills/</code></td></tr>
+  </tbody>
+</table>
+
+<footer>
+  MIT licensed. Built as a set of open Agent Skills for any <code>SKILL.md</code>-based host.
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/CONTRIBUTING.md">Contributing</a> ·
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/SECURITY.md">Security</a> ·
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>
+</footer>
+
+</div>
+</body>
+</html>

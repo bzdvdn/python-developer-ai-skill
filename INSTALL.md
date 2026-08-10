@@ -61,9 +61,19 @@ cp -r python-*/ .claude/skills/
 
 The directory name must match the `name` frontmatter field and be lowercase
 kebab-case; the suite already complies. Verify with `claude --list-skills` or
-`/skills` inside a session. The plugin/marketplace route (`/plugin marketplace add`)
-is not supported yet because this repository does not ship a `.claude-plugin`
-manifest.
+`/skills` inside a session.
+
+The plugin route is supported too: this repository ships
+`.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json`, so
+
+```bash
+/plugin marketplace add bzdvdn/python-developer-ai-skill
+/plugin install python-developer-ai-skill@python-developer-ai-skill
+```
+
+loads all twelve skills as a plugin (the plugin manifest lists each
+`python-<name>` directory as a skill). `cp -r` to `.claude/skills/` remains the
+fallback for hosts or versions without the plugin loader.
 
 ### Codex CLI
 
@@ -78,9 +88,18 @@ cp -r python-*/ .codex/skills/
 ```
 
 The repo-root `AGENTS.md` also serves as Codex CLI project context; a user-level
-global file can go in `~/.codex/AGENTS.md`. The plugin route (`codex plugin
-marketplace add`) is not supported yet because this repository does not ship a
-`.codex-plugin` manifest.
+global file can go in `~/.codex/AGENTS.md`.
+
+The plugin route is supported too: this repository ships `.codex-plugin/plugin.json`,
+so
+
+```bash
+codex plugin marketplace add bzdvdn/python-developer-ai-skill
+codex plugin add python-developer-ai-skill@python-developer-ai-skill
+```
+
+loads all twelve skills as a plugin. `cp -r` to `.codex/skills/` remains the
+fallback for CLI versions without the plugin loader.
 
 ### Kilo Code
 

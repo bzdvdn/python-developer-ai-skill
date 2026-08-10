@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "python-developer-ai-skill",
+  "displayName": "Python Developer AI Skill Suite",
+  "version": "0.1.3",
+  "description": "Composable agent skills for senior-level Python development: routing, architecture, coding, review, testing, security, performance, production, dependency analysis, scanning, data, and async.",
+  "author": {
+    "name": "bzdvdn",
+    "url": "https://github.com/bzdvdn"
+  },
+  "homepage": "https://github.com/bzdvdn/python-developer-ai-skill",
+  "repository": "https://github.com/bzdvdn/python-developer-ai-skill",
+  "license": "MIT",
+  "keywords": ["python", "agent", "skills", "architecture", "security", "code-review", "opencode", "claude-code", "codex-cli"],
+  "skills": [
+    "./python-agent-orchestrator",
+    "./python-senior-architect",
+    "./python-coder",
+    "./python-reviewer",
+    "./python-testing",
+    "./python-security",
+    "./python-performance",
+    "./python-production",
+    "./python-dependency-analyzer",
+    "./python-architecture-scanner",
+    "./python-data-architect",
+    "./python-async-architect"
+  ]
+}

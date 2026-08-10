@@ -1,0 +1,21 @@
+{
+  "name": "python-developer-ai-skill",
+  "owner": {
+    "name": "bzdvdn",
+    "url": "https://github.com/bzdvdn"
+  },
+  "version": "0.1.3",
+  "description": "Composable agent skills for senior-level Python development, installable as a Claude Code plugin. Loads all 12 skills (routing, architect, coder, reviewer, testing, security, performance, production, dependency analyzer, architecture scanner, data architect, async architect).",
+  "tags": ["python", "agent-skills", "architecture", "security", "code-review"],
+  "plugins": [
+    {
+      "name": "python-developer-ai-skill",
+      "source": "bzdvdn/python-developer-ai-skill",
+      "displayName": "Python Developer AI Skill Suite",
+      "version": "0.1.3",
+      "description": "12 composable SKILL.md-based skills for senior-level Python development with explicit handoff contracts.",
+      "license": "MIT",
+      "categories": ["code", "development", "tools"]
+    }
+  ]
+}

@@ -88,12 +88,15 @@ Top-level docs:
 | Host | Install |
 | --- | --- |
 | opencode | `.agents/skills/`, `.opencode/skills/`, or `~/.config/opencode/skills/` |
-| Claude Code | `.agents/skills/`, `.claude/skills/`, or `~/.claude/skills/` |
-| Codex CLI | `.agents/skills/`, `.codex/skills/`, or `~/.codex/skills/` |
+| Claude Code | `.claude/skills/` or plugin (`.claude-plugin/` in this repo) |
+| Codex CLI | `.codex/skills/` or plugin (`.codex-plugin/` in this repo) |
 | Kilo Code | `.kilo/skills/` or `%USERPROFILE%\.kilo\skills\` |
 | Trae | `.agents/skills/`, `~/.trae/skills/`, or `%USERPROFILE%\.trae\skills\` |
 
-See [INSTALL.md](INSTALL.md) for exact per-host commands.
+See [INSTALL.md](INSTALL.md) for exact per-host commands, including the Claude
+Code (`/plugin marketplace add bzdvdn/python-developer-ai-skill`) and Codex
+(`codex plugin marketplace add bzdvdn/python-developer-ai-skill`) install
+commands that use the bundled manifests.
 
 ## Usage
 
@@ -205,7 +208,14 @@ Tooling" policy in `PYTHON_SENIOR_ARCHITECT_SKILL_DESIGN.md`.
 - [x] Eval scenarios.
 - [x] Deeper references for testing, security, performance, production.
 - [x] Versioned releases and changelog.
-- [ ] First release cut and tagged.
+- [x] First release cut and tagged.
+
+## Community
+
+- [Documentation site](https://bzdvdn.github.io/python-developer-ai-skill/) — hosted landing page.
+- [Contributing](CONTRIBUTING.md) — how to add or modify skills.
+- [Security](SECURITY.md) — how to report a vulnerability.
+- [Code of Conduct](CODE_OF_CONDUCT.md) — community expectations.
 
 ## License
 
