@@ -7,7 +7,7 @@
 
 Composable agent skills for senior-level Python development. Each skill owns one responsibility and hands off to others through explicit contracts, so no single skill tries to be architect, implementer, reviewer, tester, security auditor, performance engineer, and production engineer at once.
 
-Current version: 0.1.3 (see [CHANGELOG.md](CHANGELOG.md)).
+Current version: 0.1.4 (see [CHANGELOG.md](CHANGELOG.md)).
 
 ## Get Started In 60 Seconds
 

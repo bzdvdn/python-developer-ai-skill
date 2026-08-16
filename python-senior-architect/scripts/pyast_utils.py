@@ -124,8 +124,11 @@ class _RuntimeImports(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
+        # Preserve relative levels for first-party resolution: ``from ..x import``
+        # adds ``..x`` (not just ``x``), otherwise ``resolve_relative_import``
+        # cannot tell it apart from an absolute import of the same name.
         if node.module:
-            self.imports.add(node.module)
+            self.imports.add("." * node.level + node.module)
         elif node.level:
             self.imports.add("." * node.level)
         self.generic_visit(node)

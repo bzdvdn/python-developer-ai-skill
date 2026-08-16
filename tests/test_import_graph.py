@@ -85,5 +85,30 @@ class TestBuildGraphAndCycles(unittest.TestCase):
             self.assertEqual(cycle[0], cycle[-1])
 
 
+class TestRelativeImports(unittest.TestCase):
+    """Relative imports of any level must resolve to real edges.
+
+    Regression: `from ..x import y` used to drop the leading dots, so the
+    graph silently omitted the edge (read as an absolute import of a name
+    that does not exist as a first-party module).
+    """
+
+    def setUp(self) -> None:
+        self.mod = load("import_graph")
+        self.root = FIXTURES / "relative_imports"
+
+    def test_relative_edges_are_detected(self) -> None:
+        graph = self.mod.build_graph(self.root)
+        edges = graph["app.domain.order"]
+        self.assertIn("app.domain.base", edges, "from .base import")
+        self.assertIn("app.service.pricing", edges, "from ..service.pricing import")
+
+    def test_no_spurious_absolute_edges(self) -> None:
+        graph = self.mod.build_graph(self.root)
+        # level-2 relative import must not leak as an absolute module name.
+        self.assertNotIn("base", graph["app.domain.order"])
+        self.assertNotIn("service.pricing", graph["app.domain.order"])
+
+
 if __name__ == "__main__":
     unittest.main()

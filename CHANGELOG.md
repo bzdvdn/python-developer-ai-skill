@@ -3,6 +3,18 @@
 All notable changes to the Python Developer Agent Skill Suite are documented here.
 Format follows Keep a Changelog. Versioning follows Semantic Versioning.
 
+## [0.1.4] - 2026-08-17
+
+### Fixed
+
+- Relative imports of any level now resolve to real graph edges. `from ..x
+  import y` used to drop the leading dots, so it was indistinguishable from an
+  absolute import of a nonexistent module: `import_graph.py` silently omitted
+  the edge (or reported a spurious one). `pyast_utils.py` now preserves the
+  relative level (`..x`), `resolve_relative_import`/`first_party_target` handle
+  multi-level targets, and tests cover level-1/level-2 imports plus a
+  `relative_imports` fixture.
+
 ## [0.1.3] - 2026-08-11
 
 ### Changed

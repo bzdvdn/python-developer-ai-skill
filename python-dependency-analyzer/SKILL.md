@@ -1,6 +1,6 @@
 ---
 name: python-dependency-analyzer
-version: 0.1.3
+version: 0.1.4
 license: MIT
 description: Use for Python import graph analysis, package boundary inspection, circular dependency detection, layer violation detection, dependency health, external dependency inventory, and architecture drift evidence.
 metadata:

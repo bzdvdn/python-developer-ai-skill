@@ -1,6 +1,6 @@
 ---
 name: python-architecture-scanner
-version: 0.1.3
+version: 0.1.4
 license: MIT
 description: Use when architecture rules must be verified deterministically, configured as machine-checkable contracts, or gated in CI. Runs layer-rule and forbidden-import scanners and package metrics, complementing python-dependency-analyzer and python-senior-architect.
 metadata:

@@ -1,6 +1,6 @@
 ---
 name: python-production
-version: 0.1.3
+version: 0.1.4
 license: MIT
 description: Use for Python production readiness, deployment architecture, observability, configuration, migrations, rollback, incidents, runbooks, SLOs, background workers, and operational safety.
 metadata:

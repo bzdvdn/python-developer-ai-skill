@@ -2,9 +2,53 @@
 
 from __future__ import annotations
 
+import ast
 import unittest
+from pathlib import Path
 
 from tests._loader import load
+
+FIXTURES = Path(__file__).resolve().parent / "fixtures"
+
+
+class TestRelativeImportCollection(unittest.TestCase):
+    """level-relative imports must keep their dots (imported_roots).
+
+    Regression: ``from ..x import y`` dropped the leading dots, so it was
+    indistinguishable from an absolute import of a nonexistent module.
+    """
+
+    def setUp(self) -> None:
+        self.mod = load("pyast_utils")
+
+    def test_dotted_level_preserved(self) -> None:
+        tree = ast.parse("from .base import b\nfrom ..svc.pricing import p\n")
+        roots = self.mod._walk_runtime_imports(tree, resolve=False)
+        self.assertIn(".base", roots)
+        self.assertIn("..svc.pricing", roots)
+
+    def test_absolute_imports_unchanged(self) -> None:
+        tree = ast.parse("import os\nfrom collections.abc import Iterator\n")
+        roots = self.mod._walk_runtime_imports(tree, resolve=False)
+        self.assertIn("os", roots)
+        self.assertIn("collections.abc", roots)
+
+    def test_first_party_target_resolves_level_two(self) -> None:
+        target = self.mod.first_party_target(
+            "..svc.pricing", "app.domain.order", {"app", "app.svc", "app.svc.pricing"}
+        )
+        self.assertEqual(target, "app.svc.pricing")
+
+    def test_imported_roots_from_file(self) -> None:
+        fixture = FIXTURES / "relative_imports/app/domain/order.py"
+        roots = self.mod.imported_roots(fixture)
+        self.assertIn(".base", roots)
+        self.assertIn("..service.pricing", roots)
+
+    def test_resolve_true_filters_relative(self) -> None:
+        tree = ast.parse("from .base import b\nimport os\n")
+        absolute = self.mod._walk_runtime_imports(tree, resolve=True)
+        self.assertEqual(absolute, {"os"})
 
 
 class TestFrameworkCategory(unittest.TestCase):

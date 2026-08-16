@@ -1,6 +1,6 @@
 ---
 name: python-data-architect
-version: 0.1.3
+version: 0.1.4
 license: MIT
 description: Use for persistence, data modeling, migrations, data integrity, and pipeline design in Python systems. Specializes in ORM/repository design, schema and migration strategy, read/write paths, warehouses, and idempotent ETL.
 metadata:

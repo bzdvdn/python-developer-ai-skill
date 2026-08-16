@@ -1,6 +1,6 @@
 ---
 name: python-testing
-version: 0.1.3
+version: 0.1.4
 license: MIT
 description: Use for Python test strategy, regression coverage, pytest design, fixtures, factories, async tests, integration tests, contract tests, and validation planning. This skill designs or implements tests according to existing project conventions.
 metadata:

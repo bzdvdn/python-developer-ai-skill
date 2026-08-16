@@ -1,6 +1,6 @@
 ---
 name: python-agent-orchestrator
-version: 0.1.3
+version: 0.1.4
 license: MIT
 description: Use when a Python request spans multiple specialist skills or needs routing across architect, coder, reviewer, testing, security, performance, production, dependency analysis, scanning, data, or async architecture. Classifies the task, chooses the smallest skill chain, and defines handoff contracts.
 metadata:
