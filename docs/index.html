@@ -43,23 +43,26 @@
 
 <p class="badges">
   <a href="https://github.com/bzdvdn/python-developer-ai-skill/actions/workflows/ci.yml"><img src="https://github.com/bzdvdn/python-developer-ai-skill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/LICENSE"><img src="https://img.shields.io/github/license/bzdvdn/python-developer-ai-skill" alt="License"></a>
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/master/LICENSE"><img src="https://img.shields.io/github/license/bzdvdn/python-developer-ai-skill" alt="License"></a>
   <a href="https://github.com/bzdvdn/python-developer-ai-skill/releases"><img src="https://img.shields.io/github/v/release/bzdvdn/python-developer-ai-skill" alt="Release"></a>
   <a href="https://github.com/bzdvdn/python-developer-ai-skill/stargazers"><img src="https://img.shields.io/github/stars/bzdvdn/python-developer-ai-skill" alt="Stars"></a>
 </p>
 
 <p class="cta">
   <a class="btn" href="https://github.com/bzdvdn/python-developer-ai-skill">GitHub</a>
-  <a class="btn ghost" href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/examples/billing-feature-walkthrough.md">Example walkthrough</a>
-  <a class="btn ghost" href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/INSTALL.md">Install guide</a>
+  <a class="btn ghost" href="https://github.com/bzdvdn/python-developer-ai-skill/blob/master/examples/billing-feature-walkthrough.md">Example walkthrough</a>
+  <a class="btn ghost" href="https://github.com/bzdvdn/python-developer-ai-skill/blob/master/INSTALL.md">Install guide</a>
 </p>
 
 <h2>Get started in 60 seconds</h2>
-<pre><code>mkdir -p .agents/skills
-cp -r python-*/ .agents/skills/</code></pre>
-<p>`.agents/skills/` is the vendor-neutral location shared by opencode, Codex CLI,
-Trae, and most <code>SKILL.md</code>-based agents. Per-host paths for Claude Code and
-Kilo Code are in the <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/INSTALL.md">INSTALL.md</a>.</p>
+<pre><code>curl -fsSL https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.sh | sh</code></pre>
+<p>On Windows PowerShell:</p>
+<pre><code>irm https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.ps1 | iex</code></pre>
+<p>The installers ship as release assets and install the latest release into
+<code>.agents/skills/</code>, the vendor-neutral location shared by opencode, Codex
+CLI, Trae, and most <code>SKILL.md</code>-based agents. Nothing is fetched from the
+<code>master</code> branch. Per-host paths and <code>--host</code>/<code>--global</code>
+options are in the <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/master/INSTALL.md">INSTALL.md</a>.</p>
 
 <h2>Then just ask your agent</h2>
 <ul>
@@ -113,9 +116,9 @@ explicit contracts.</p>
 
 <footer>
   MIT licensed. Built as a set of open Agent Skills for any <code>SKILL.md</code>-based host.
-  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/CONTRIBUTING.md">Contributing</a> ·
-  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/SECURITY.md">Security</a> ·
-  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/master/CONTRIBUTING.md">Contributing</a> ·
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/master/SECURITY.md">Security</a> ·
+  <a href="https://github.com/bzdvdn/python-developer-ai-skill/blob/master/CODE_OF_CONDUCT.md">Code of Conduct</a>
 </footer>
 
 </div>
