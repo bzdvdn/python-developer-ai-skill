@@ -15,6 +15,7 @@ SCRIPTS = {
     "validate_suite": ROOT / "scripts/validate_suite.py",
     "judge_eval": ROOT / "scripts/judge_eval.py",
     "sync_pyast_utils": ROOT / "scripts/sync_pyast_utils.py",
+    "stamp_installers": ROOT / "scripts/stamp_installers.py",
     "pyast_utils": ROOT / "python-dependency-analyzer/scripts/pyast_utils.py",
 }
 

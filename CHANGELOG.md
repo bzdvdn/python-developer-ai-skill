@@ -3,6 +3,35 @@
 All notable changes to the Python Developer Agent Skill Suite are documented here.
 Format follows Keep a Changelog. Versioning follows Semantic Versioning.
 
+## [0.1.5] - 2026-11-18
+
+### Added
+
+- `install.sh` and `install.ps1` one-command installers. They copy the suite from
+  a local clone or download the latest GitHub release (pinned with `--ref`/`-Ref`),
+  support per-host and per-scope destinations (`agents`, `opencode`, `claude`,
+  `codex`, `kilo`, `trae`, `all`), and let `curl ... | sh` / `irm ... | iex` work
+  without a clone.
+- A release workflow publishes the installers as release assets. Each asset is
+  stamped with its tag, so `releases/latest/download/install.sh` installs exactly
+  that release and never fetches `master`; `.github/workflows/release.yml` verifies
+  the tag matches the suite version before publishing.
+- `tests/test_install_scripts.py` covers the shell installer's destinations,
+  idempotency, host validation, and PowerShell script parsing when `pwsh` exists.
+- A `coder-no-global-or-cast` eval scenario checks that implementation work uses
+  injected state and validated boundaries instead of `global` and `cast`.
+
+### Changed
+
+- `python-coder` now forbids introducing `global` state and using `typing.cast`,
+  `# type: ignore`, or `Any` to silence the type checker; `references/python-practices.md`
+  has good/avoid examples and the guidance points to explicit state ownership and
+  boundary validation instead.
+- `python-reviewer` treats new `global` statements, unchecked casts, and type-ignore
+  suppressions as review findings.
+- `INSTALL.md` and `README.md` document the curl and PowerShell one-liners.
+- Plugin manifest versions now match the suite version.
+
 ## [0.1.4] - 2026-08-17
 
 ### Fixed

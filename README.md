@@ -7,9 +7,25 @@
 
 Composable agent skills for senior-level Python development. Each skill owns one responsibility and hands off to others through explicit contracts, so no single skill tries to be architect, implementer, reviewer, tester, security auditor, performance engineer, and production engineer at once.
 
-Current version: 0.1.4 (see [CHANGELOG.md](CHANGELOG.md)).
+Current version: 0.1.5 (see [CHANGELOG.md](CHANGELOG.md)).
 
 ## Get Started In 60 Seconds
+
+Install the latest GitHub release without cloning (Linux/macOS; project-local
+`.agents/skills`):
+
+```bash
+curl -fsSL https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.sh | sh
+```
+
+Windows PowerShell:
+
+```powershell
+irm https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.ps1 | iex
+```
+
+Installers ship as release assets; the `releases/latest/download/` URLs install the
+latest release and never fetch `master`. Or copy from a clone:
 
 ```bash
 mkdir -p .agents/skills
@@ -17,9 +33,9 @@ cp -r python-*/ .agents/skills/
 ```
 
 `.agents/skills/` is the vendor-neutral location recognized by opencode, Codex
-CLI, Trae, and most other `SKILL.md`-based agents. Per-host paths (Claude Code,
-Kilo Code, ...) are in [INSTALL.md](INSTALL.md). Then ask your agent, for
-example:
+CLI, Trae, and most other `SKILL.md`-based agents. Use `--host claude --global`
+(or the PowerShell equivalents) for per-host global installs; all paths and
+options are in [INSTALL.md](INSTALL.md). Then ask your agent, for example:
 
 - "Find circular imports in this repo"
 - "Review this PR for architectural risks"
@@ -78,6 +94,7 @@ Top-level docs:
 - `PYTHON_AGENT_SKILL_SUITE.md` — routing philosophy and recommended flows.
 - `PYTHON_SENIOR_ARCHITECT_SKILL_DESIGN.md` — design rationale for the architect skill.
 - `INSTALL.md` — per-host installation guide (opencode, Claude Code, Codex CLI, Kilo Code, Trae).
+- `install.sh` / `install.ps1` — one-command installers for Unix shells and Windows PowerShell.
 - `examples/billing-feature-walkthrough.md` — end-to-end artifact example across skills.
 - `evals/` — golden scenarios for measuring skill quality.
 - `scripts/validate_suite.py` — consistency validation.

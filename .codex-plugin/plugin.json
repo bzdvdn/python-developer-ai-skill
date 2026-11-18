@@ -1,6 +1,6 @@
 {
   "name": "python-developer-ai-skill",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "Composable agent skills for senior-level Python development: routing, architecture, coding, review, testing, security, performance, production, dependency analysis, scanning, data, and async.",
   "author": {
     "name": "bzdvdn",

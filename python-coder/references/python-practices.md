@@ -84,6 +84,65 @@ Why it is good:
 - Domain model does not need a session.
 - Conversion is isolated.
 
+## No `global` State
+
+Good:
+```python
+def add_metric(metrics: dict[str, int], name: str) -> None:
+    metrics[name] = metrics.get(name, 0) + 1
+```
+
+Avoid:
+```python
+_metrics: dict[str, int] = {}
+
+def add_metric(name: str) -> None:
+    global _metrics
+    _metrics[name] = _metrics.get(name, 0) + 1
+```
+
+Why to avoid:
+- The dependency is hidden, so callers cannot tell what the function mutates.
+- Tests leak state into each other unless they reset the module.
+- Concurrency and lifecycle bugs become invisible.
+
+If a process-wide value is genuinely required, inject it explicitly (a small
+state object, a repository, a client) and keep the mutable instance at the
+composition root. Do not reach for `global` to make a helper convenient.
+
+## No Type-Checker Silencing
+
+Good:
+```python
+def parse_user(payload: object) -> User:
+    if not isinstance(payload, dict):
+        raise ValueError("user payload must be an object")
+    email = payload.get("email")
+    if not isinstance(email, str):
+        raise ValueError("user email must be a string")
+    return User(email=email)
+```
+
+Avoid:
+```python
+from typing import cast
+
+def parse_user(payload: object) -> User:
+    data = cast(dict[str, str], payload)  # type: ignore[redundant-cast]
+    return User(email=data["email"])
+```
+
+Why to avoid:
+- `cast` asserts a type at compile time without checking at runtime.
+- `# type: ignore` hides the next real error at the same line, including future
+  refactors.
+- Validating at the boundary gives callers a real error instead of a crash later.
+
+Use `cast` only where an external library or protocol forces it, keep the call
+next to the runtime check that justifies it, and leave a short comment naming
+the boundary. Prefer `TypeGuard`, `Protocol`, generics, `TypedDict`, or a
+validated parser otherwise.
+
 ## Explicit Errors
 
 Good:

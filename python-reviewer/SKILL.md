@@ -1,6 +1,6 @@
 ---
 name: python-reviewer
-version: 0.1.4
+version: 0.1.5
 license: MIT
 description: Use for Python code review and PR review focused on correctness, regressions, maintainability, typing, tests, API behavior, and integration risk. This skill prioritizes findings with file references and does not rewrite code unless explicitly asked.
 metadata:
@@ -43,8 +43,8 @@ Do not use for:
 - Correctness: edge cases, error paths, invariants, state transitions, concurrency, idempotency.
 - Compatibility: API contracts, migrations, config, serialization, client behavior.
 - Tests: missing regression tests, wrong test layer, brittle mocks, untested failure paths.
-- Typing: public contracts, unsafe `Any`, optional handling, protocol mismatch.
-- Maintainability: unclear naming, large functions, hidden coupling, duplicated logic.
+- Typing: public contracts, unsafe `Any`, optional handling, protocol mismatch, unchecked `typing.cast`, and new `# type: ignore` suppressions.
+- Maintainability: unclear naming, large functions, hidden coupling, duplicated logic, `global` statements, and mutable module-level state.
 - Architecture: layer violations, framework leakage, dependency direction, circular imports.
 - Security: auth gaps, input validation, secrets, unsafe deserialization, injection, SSRF.
 - Performance: N+1 queries, blocking async code, unbounded loops, missing timeouts.
@@ -82,6 +82,7 @@ Test review:
 - Lead with issues that can break users, data, security, operations, or maintainability.
 - Do not report speculative style preferences as findings.
 - Every finding needs evidence, impact, and a concrete fix direction.
+- Treat a new `global` or `cast`/`type: ignore` as a finding when it hides state ownership or bypasses the type contract; name the boundary or state object that should carry it instead.
 - If evidence is incomplete, state the residual risk instead of guessing.
 - A clean review still mentions meaningful validation gaps.
 

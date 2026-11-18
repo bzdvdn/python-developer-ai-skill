@@ -1,6 +1,6 @@
 ---
 name: python-coder
-version: 0.1.4
+version: 0.1.5
 license: MIT
 description: Use when Python implementation code must be written or modified. Executes bounded plans, bug fixes, refactors, tests, and integrations while preserving architecture and conventions; for unclear architecture, use python-senior-architect first.
 metadata:
@@ -44,7 +44,8 @@ Do not use for:
 
 - Fit the repository style.
 - Prefer simple functions over premature class hierarchies.
-- Prefer explicit dependencies over hidden globals.
+- Prefer explicit dependencies over hidden globals. Never introduce a `global` statement or mutate module-level state; pass dependencies in, return results out, or let the caller own the state object.
+- Never use `typing.cast`, `# type: ignore`, or `Any` to silence the type checker. Fix the type flow with narrowing, generics, `Protocol`, `TypedDict`, or a validated boundary parser; reserve `cast` for a documented boundary where a runtime check sits next to it.
 - Keep side effects at boundaries.
 - Keep business rules testable without frameworks.
 - Use dataclasses, Pydantic models, or typed dicts only when they match local patterns.
@@ -104,6 +105,8 @@ Refactor:
 - Local conventions beat generic best practices when they are clear.
 - A change is too large when it forces new architecture decisions while coding.
 - A new abstraction should remove real duplication, volatility, or boundary leakage.
+- A new `global` is a state-ownership smell: the function needs something the caller should have supplied.
+- A new `cast` or `type: ignore` is a type-flow smell: the checker is telling you the boundary or annotation is wrong.
 - Tests should prove behavior changed intentionally, not just execute lines.
 - Final handoff should name validation honestly, including commands that could not be run.
 
@@ -114,10 +117,13 @@ Good:
 - Makes the smallest change that satisfies the behavior.
 - Preserves public contracts unless the task explicitly changes them.
 - Adds a regression test for the changed behavior when practical.
+- Passes state through parameters and return values, and lets narrowing prove types.
 - Reports exact validation commands and results.
 
 Bad:
 - Rewrites surrounding architecture while fixing a local bug.
+- Adds `global` or module-level mutable state to make a helper reach the data it needs.
+- Sprinkles `cast(...)`, `# type: ignore`, or `Any` until the type checker stops complaining.
 - Introduces a new framework, base class, or generic helper without local precedent.
 - Silently changes response shapes, exception types, database behavior, or async boundaries.
 - Adds tests that only assert mocks were called.

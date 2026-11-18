@@ -1,0 +1,51 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Suite consistency (strict)
+        env:
+          PYTHONPYCACHEPREFIX: /tmp/pycache
+        run: python3 scripts/validate_suite.py --strict
+
+      - name: Unit tests
+        env:
+          PYTHONPYCACHEPREFIX: /tmp/pycache
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Tag matches suite version
+        run: |
+          version=$(sed -n 's/^version: //p' python-coder/SKILL.md | head -n 1)
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match suite version v$version" >&2
+            exit 1
+          fi
+
+      - name: Stamp installers
+        run: python3 scripts/stamp_installers.py "$GITHUB_REF_NAME" --out dist
+
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/install.sh dist/install.ps1 --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/install.sh dist/install.ps1 \
+              --title "$GITHUB_REF_NAME" --generate-notes
+          fi

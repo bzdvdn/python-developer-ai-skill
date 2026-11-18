@@ -8,6 +8,58 @@ into that host's skills location, then restarting (or starting a new session).
 No host-specific wrapper is required: every skill already ships the `name` and
 `description` frontmatter fields that all SKILL.md-based hosts read.
 
+## Quick install (no clone)
+
+Each GitHub release publishes `install.sh` and `install.ps1` as release assets,
+and the installer from a release installs that same release. The
+`/releases/latest/download/...` URLs below pick the newest release, so nothing
+is fetched from the `master` branch. Use `--ref` (`-Ref` on Windows) to install
+a different branch, tag, or commit from within an installer.
+
+Linux, macOS, and other Unix shells (project install into `.agents/skills`):
+
+```bash
+curl -fsSL https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.sh | sh
+```
+
+Choose a host and scope with arguments:
+
+```bash
+# Global install for Claude Code (~/.claude/skills)
+curl -fsSL https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.sh | sh -s -- --host claude --global
+
+# One copy into every supported host location in the current project
+curl -fsSL https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.sh | sh -s -- --host all
+
+# Explicit directory, or a pinned ref instead of the latest release
+curl -fsSL https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.sh | sh -s -- --dest ~/tools/skills
+curl -fsSL https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.sh | sh -s -- --ref v0.1.5
+
+# Or pin the installer asset itself (it installs its own release)
+curl -fsSL https://github.com/bzdvdn/python-developer-ai-skill/releases/download/v0.1.5/install.sh | sh
+```
+
+From a clone, call the script directly: `./install.sh --host opencode --global`.
+Run `./install.sh --help` for all options. The script is POSIX `sh`, needs only
+`curl` and `tar`, and replaces only the suite's own `python-*` directories.
+
+Windows PowerShell (project install into `.\.agents\skills`):
+
+```powershell
+irm https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.ps1 | iex
+```
+
+With options, create a script block so parameters are passed correctly:
+
+```powershell
+& ([scriptblock]::Create((irm https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.ps1))) -HostName claude -Global
+& ([scriptblock]::Create((irm https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.ps1))) -HostName all
+& ([scriptblock]::Create((irm https://github.com/bzdvdn/python-developer-ai-skill/releases/latest/download/install.ps1))) -Destination C:\tools\skills
+```
+
+From a clone: `.\install.ps1 -HostName codex -Global`. Requires Windows
+PowerShell 5.1 or later.
+
 ## One copy for most hosts
 
 `.agents/skills/` is the vendor-neutral location recognized by opencode, Codex CLI,

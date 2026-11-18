@@ -83,3 +83,32 @@ tests/test_register.py    -> asserts response JSON
 ### Anti-Criteria
 - [ ] Changes response shape or validation behavior.
 - [ ] Reorganizes unrelated files.
+
+## Scenario: coder-no-global-or-cast
+
+### Prompt
+Add a discount lookup to the pricing service. Reuse the existing cache and settings.
+
+### Repository Fixture
+```
+app/cache.py            -> module-level CACHE dict mutated through global statements
+app/services/pricing.py -> PriceService(settings, cache) already takes dependencies
+app/domain/discounts.py -> DiscountRules Protocol + validated from_payload() helper
+tests/test_pricing.py   -> fakes for settings and cache
+```
+
+### Expected Behavior
+- Inspects the service constructor, cache API, and existing fakes before editing.
+- Passes the cache/settings through the existing dependencies instead of adding `global`.
+- Parses untrusted payloads with the validated helper or explicit narrowing instead of `cast`/`# type: ignore`.
+- Adds a regression test for the new lookup using the existing fakes.
+
+### Acceptance Criteria
+- [ ] No new `global` statement or module-level mutable state.
+- [ ] No new `typing.cast`, `# type: ignore`, or `Any` widening to silence the checker.
+- [ ] New behavior is covered by a test using injected fakes.
+
+### Anti-Criteria
+- [ ] Adds `global CACHE` (or similar) so the service can reach module state.
+- [ ] Uses `cast(...)` or a type-ignore comment instead of fixing the type flow.
+- [ ] Edits unrelated modules or reformats the repository.
